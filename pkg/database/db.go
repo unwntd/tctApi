@@ -13,7 +13,7 @@ func InitDB(cfg *config.Config) *gorm.DB {
 	if (cfg.DBHost == "") || (cfg.DBUser == "") || (cfg.DBPass == "") || (cfg.DBName == "") || (cfg.DBPort == "") {
 		return nil
 	}
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
 		cfg.DBHost, cfg.DBUser, cfg.DBPass, cfg.DBName, cfg.DBPort)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
