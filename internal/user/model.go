@@ -3,7 +3,7 @@ package user
 import "time"
 
 type User struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
+	ID        uint      `gorm:"primaryKey;autoIncrement" json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `gorm:"uniqueIndex" json:"email"`
 	Password  string    `json:"-"` // never return password hash

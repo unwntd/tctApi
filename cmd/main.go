@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"tctApi/internal/router"
 	"tctApi/pkg/config"
 	"tctApi/pkg/database"
@@ -12,6 +13,11 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 	db := database.InitDB(cfg)
+
+	if len(os.Args) > 1 && os.Args[1] == "migrate" {
+		database.RunMigration(cfg)
+		return
+	}
 
 	r := gin.Default()
 	router.SetupRoutes(r, db, cfg)
