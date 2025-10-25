@@ -15,7 +15,7 @@ func main() {
 	db := database.InitDB(cfg)
 
 	if len(os.Args) > 1 && os.Args[1] == "migrate" {
-		database.RunMigration(cfg)
+		database.RunMigration(db)
 		return
 	}
 
