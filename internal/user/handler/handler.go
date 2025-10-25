@@ -17,11 +17,11 @@ func NewUserHandler(userUC usecase.UserUsecase) *UserHandler {
 	return &UserHandler{userUC}
 }
 
-func (h *UserHandler) RegisterRoutes(r *gin.RouterGroup) {
-	users := r.Group("/users")
-	users.POST("/register", h.Register)
-	users.POST("/login", h.Login)
-}
+// func (h *UserHandler) RegisterRoutes(r *gin.RouterGroup) {
+// 	users := r.Group("/users")
+// 	users.POST("/register", h.Register)
+// 	users.POST("/login", h.Login)
+// }
 
 func (h *UserHandler) Register(c *gin.Context) {
 	var req user.RegisterRequest
