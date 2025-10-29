@@ -1,3 +1,0 @@
-- [ ] Fix FindAll method in repo.go: Change var organizers *[]organizer.Organizer to []organizer.Organizer and adjust return
-- [ ] Fix FindById method in repo.go: Correct the query to use First with id
-- [ ] Fix Update method in repo.go: Change Updates(&o) to Updates(o)
