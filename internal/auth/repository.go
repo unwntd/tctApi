@@ -22,8 +22,8 @@ func NewRefreshTokenRepository(db *gorm.DB) RefreshTokenRepository {
 }
 
 func (r *refreshRepo) Create(userID uint, expiresAt time.Time) (*RefreshToken, error) {
-	v := &RefreshToken{}
-	r.ValidateByUserID(userID, v)
+	// Revoke all existing non-revoked tokens for the user
+	r.db.Model(&RefreshToken{}).Where("user_id = ? AND revoked = ?", userID, false).Update("revoked", true)
 
 	rt := &RefreshToken{
 		UserID:    userID,
@@ -32,13 +32,6 @@ func (r *refreshRepo) Create(userID uint, expiresAt time.Time) (*RefreshToken, e
 		Revoked:   false,
 	}
 	return rt, r.db.Create(rt).Error
-}
-
-func (r *refreshRepo) ValidateByUserID(userID uint, v *RefreshToken) {
-	err := r.db.Where("user_id = ?", userID).First(&v).Error
-	if err != nil {
-		r.db.Model(&v).Where("id = ?", v.ID).Update("revoked", true)
-	}
 }
 
 func (r *refreshRepo) Validate(tokenID string, userID uint) (*RefreshToken, error) {

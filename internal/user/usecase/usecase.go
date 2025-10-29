@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"tctApi/internal/user"
 	"tctApi/internal/user/repository"
 	"time"
@@ -39,7 +40,7 @@ func (u *userUsecase) Register(input *user.RegisterRequest) (*user.User, error) 
 	}
 
 	if err := u.repo.Create(newUser); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to register user: %w", err)
 	}
 	return newUser, nil
 }

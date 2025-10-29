@@ -19,6 +19,7 @@ func main() {
 		return
 	}
 
+	gin.SetMode(cfg.AppMode)
 	r := gin.Default()
 	router.SetupRoutes(r, db, cfg)
 
