@@ -10,6 +10,10 @@ import (
 	orgRepo "tctApi/internal/organizer/repository"
 	orgUsecase "tctApi/internal/organizer/usecase"
 
+	rlHandler "tctApi/internal/role/handler"
+	rlRepo "tctApi/internal/role/repository"
+	rlUsecase "tctApi/internal/role/usecase"
+
 	"tctApi/pkg/config"
 	"time"
 
@@ -32,6 +36,10 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB, cfg *config.Config) {
 	organizerUsecase := orgUsecase.NewOrganizerUsecase(organizerRepo)
 	organizerHandler := orgHandler.NewOrganizerHandler(organizerUsecase)
 
+	roleRepo := rlRepo.NewRoleRepository(db)
+	roleUsecase := rlUsecase.NewRoleUsecase(roleRepo)
+	roleHandler := rlHandler.NewRoleHandler(roleUsecase)
+
 	CorsConfig(r)
 	api := r.Group("/api/v1")
 	usersGroup := api.Group("/users")
@@ -43,10 +51,16 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB, cfg *config.Config) {
 	authGroup.GET("/refresh", authHandler.Refresh)
 
 	organizerGroup := api.Group("/organizers", auth.AuthMiddleware(jwtService))
-	organizerGroup.GET("/all", organizerHandler.FindAll)
 	organizerGroup.POST("/create", organizerHandler.Create)
+	organizerGroup.GET("/all", organizerHandler.FindAll)
 	organizerGroup.PUT("/update/:id", organizerHandler.Update)
 	organizerGroup.DELETE("/delete/:id", organizerHandler.Delete)
+
+	roleGroup := api.Group("/roles", auth.AuthMiddleware(jwtService))
+	roleGroup.POST("create", roleHandler.Create)
+	roleGroup.GET("/all", roleHandler.FindAll)
+	roleGroup.PUT("/update/:id", roleHandler.Update)
+	roleGroup.DELETE("/delete/:id", roleHandler.Delete)
 }
 
 func CorsConfig(r *gin.Engine) {
