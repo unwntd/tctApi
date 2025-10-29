@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	Create(u *user.User) error
+	Create(m *user.User) error
 	FindByEmail(email string) (*user.User, error)
 }
 

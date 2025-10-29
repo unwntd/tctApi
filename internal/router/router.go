@@ -44,6 +44,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB, cfg *config.Config) {
 
 	organizerGroup := api.Group("/organizers", auth.AuthMiddleware(jwtService))
 	organizerGroup.GET("/all", organizerHandler.FindAll)
+	organizerGroup.POST("/create", organizerHandler.Create)
 }
 
 func CorsConfig(r *gin.Engine) {
