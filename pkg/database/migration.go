@@ -5,6 +5,7 @@ import (
 	"tctApi/internal/auth"
 	"tctApi/internal/organizer"
 	"tctApi/internal/role"
+	"tctApi/internal/ticket"
 	tickettier "tctApi/internal/ticket-tier"
 	users "tctApi/internal/user"
 
@@ -18,6 +19,7 @@ func RunMigration(db *gorm.DB) {
 		&auth.RefreshToken{},
 		&role.Role{},
 		&tickettier.TicketTier{},
+		&ticket.Ticket{},
 	}
 
 	err := db.AutoMigrate(AutoMigratableModels...)

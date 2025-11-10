@@ -18,6 +18,10 @@ import (
 	ttRepo "tctApi/internal/ticket-tier/repository"
 	ttUsecase "tctApi/internal/ticket-tier/usecase"
 
+	tHandler "tctApi/internal/ticket/handler"
+	tRepo "tctApi/internal/ticket/repository"
+	tUsecase "tctApi/internal/ticket/usecase"
+
 	"tctApi/pkg/config"
 	"time"
 
@@ -44,9 +48,13 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB, cfg *config.Config) {
 	roleUsecase := rlUsecase.NewRoleUsecase(roleRepo)
 	roleHandler := rlHandler.NewRoleHandler(roleUsecase)
 
-	ttRepo := ttRepo.NewTicketTierRepository(db)
-	ttUsecase := ttUsecase.NewTicketTierUsecase(ttRepo)
-	ttHandler := ttHandler.NewTicketTierHandler(ttUsecase)
+	ticketTierRepo := ttRepo.NewTicketTierRepository(db)
+	ticketTierUsecase := ttUsecase.NewTicketTierUsecase(ticketTierRepo)
+	ticketTierHandler := ttHandler.NewTicketTierHandler(ticketTierUsecase)
+
+	ticketRepo := tRepo.NewTicketRepository(db)
+	ticketUsecase := tUsecase.NewTicketUsecase(ticketRepo, ticketTierRepo)
+	ticketHandler := tHandler.NewTicketHandler(ticketUsecase)
 
 	CorsConfig(r)
 	api := r.Group("/api/v1")
@@ -73,11 +81,19 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB, cfg *config.Config) {
 	roleGroup.DELETE("/delete/:id", roleHandler.Delete)
 
 	ticketTierGroup := api.Group("/ticket-tiers", auth.AuthMiddleware(jwtService))
-	ticketTierGroup.POST("/create", ttHandler.Create)
-	ticketTierGroup.GET("/all", ttHandler.FindAll)
-	ticketTierGroup.GET("/:id", ttHandler.FindById)
-	ticketTierGroup.PUT("/update/:id", ttHandler.Update)
-	ticketTierGroup.DELETE("/delete/:id", ttHandler.Delete)
+	ticketTierGroup.POST("/create", ticketTierHandler.Create)
+	ticketTierGroup.GET("/all", ticketTierHandler.FindAll)
+	ticketTierGroup.GET("/:id", ticketTierHandler.FindById)
+	ticketTierGroup.PUT("/update/:id", ticketTierHandler.Update)
+	ticketTierGroup.DELETE("/delete/:id", ticketTierHandler.Delete)
+
+	ticketGroup := api.Group("/tickets", auth.AuthMiddleware(jwtService))
+	ticketGroup.POST("/create", ticketHandler.Create)
+	ticketGroup.GET("/all", ticketHandler.FindAll)
+	ticketGroup.GET("/:id", ticketHandler.FindById)
+	ticketGroup.PUT("/update/:id", ticketHandler.Update)
+	ticketGroup.DELETE("/delete/:id", ticketHandler.Delete)
+
 }
 
 func CorsConfig(r *gin.Engine) {
