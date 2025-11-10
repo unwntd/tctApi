@@ -51,6 +51,22 @@ func (o *OrganizerHandler) FindAll(c *gin.Context) {
 	response.Success(c, data)
 }
 
+func (o *OrganizerHandler) FindById(c *gin.Context) {
+	idUint, err := helper.ConvertToUint(c.Param("id"))
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	org, err := o.organizerUC.FindById(idUint)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.Success(c, org)
+}
+
 // Update an organizer by ID. Returns an error if the organizer does not exist or if deletion fails.
 // The updated organizer is returned along with a nil error if the update is successful.
 func (o *OrganizerHandler) Update(c *gin.Context) {

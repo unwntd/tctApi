@@ -2,40 +2,40 @@ package handler
 
 import (
 	"net/http"
-	"tctApi/internal/role"
-	"tctApi/internal/role/usecase"
+	tickettier "tctApi/internal/ticket-tier"
+	"tctApi/internal/ticket-tier/usecase"
 	"tctApi/pkg/helper"
 	"tctApi/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )
 
-type RoleHandler struct {
-	roleUC usecase.RoleUsecase
+type TicketTierHandler struct {
+	ticketTierUC usecase.TicketTierUsecase
 }
 
-func NewRoleHandler(roleUC usecase.RoleUsecase) *RoleHandler {
-	return &RoleHandler{roleUC}
+func NewTicketTierHandler(ticketTierUC usecase.TicketTierUsecase) TicketTierHandler {
+	return TicketTierHandler{ticketTierUC}
 }
 
-func (r *RoleHandler) Create(c *gin.Context) {
-	var req role.RoleRequest
+func (tt *TicketTierHandler) Create(c *gin.Context) {
+	var req tickettier.TicketTierRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	newRole, err := r.roleUC.Create(&req)
+	newOrg, err := tt.ticketTierUC.Create(&req)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	response.Success(c, newRole)
+	response.Success(c, newOrg)
 }
 
-func (r *RoleHandler) FindAll(c *gin.Context) {
-	data, err := r.roleUC.FindAll()
+func (tt *TicketTierHandler) FindAll(c *gin.Context) {
+	data, err := tt.ticketTierUC.FindAll()
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
@@ -44,55 +44,54 @@ func (r *RoleHandler) FindAll(c *gin.Context) {
 	response.Success(c, data)
 }
 
-func (r *RoleHandler) FindById(c *gin.Context) {
+func (tt *TicketTierHandler) FindById(c *gin.Context) {
 	idUint, err := helper.ConvertToUint(c.Param("id"))
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	role, err := r.roleUC.FindById(idUint)
+	ticketTier, err := tt.ticketTierUC.FindById(idUint)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	response.Success(c, role)
+	response.Success(c, ticketTier)
 }
 
-func (r *RoleHandler) Update(c *gin.Context) {
+func (tt *TicketTierHandler) Update(c *gin.Context) {
 	idUint, err := helper.ConvertToUint(c.Param("id"))
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	var req role.RoleRequest
+	var req tickettier.TicketTierRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	role, err := r.roleUC.Update(uint(idUint), &req)
+	ticketTier, err := tt.ticketTierUC.Update(idUint, &req)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	response.Success(c, role)
+	response.Success(c, ticketTier)
 }
 
-func (r *RoleHandler) Delete(c *gin.Context) {
+func (tt *TicketTierHandler) Delete(c *gin.Context) {
 	idUint, err := helper.ConvertToUint(c.Param("id"))
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err = r.roleUC.Delete(uint(idUint))
+	err = tt.ticketTierUC.Delete(idUint)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, err.Error())
-		return
 	}
 
 	response.Success(c, nil)
