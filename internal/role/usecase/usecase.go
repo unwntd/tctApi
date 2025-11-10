@@ -9,6 +9,7 @@ import (
 type RoleUsecase interface {
 	Create(input *role.RoleRequest) (*role.Role, error)
 	FindAll() (*[]role.Role, error)
+	FindById(id uint) (*role.Role, error)
 	Update(id uint, input *role.RoleRequest) (*role.Role, error)
 	Delete(id uint) error
 }
@@ -51,6 +52,15 @@ func (r *roleUsecase) FindAll() (*[]role.Role, error) {
 	}
 
 	return roles, nil
+}
+
+func (r *roleUsecase) FindById(id uint) (*role.Role, error) {
+	role, err := r.repo.FindById(id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find role: %w", err)
+	}
+
+	return role, err
 }
 
 // Update a role by ID. Returns an error if the role does not exist or if deletion fails.

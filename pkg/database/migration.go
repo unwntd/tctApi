@@ -5,13 +5,22 @@ import (
 	"tctApi/internal/auth"
 	"tctApi/internal/organizer"
 	"tctApi/internal/role"
+	tickettier "tctApi/internal/ticket-tier"
 	users "tctApi/internal/user"
 
 	"gorm.io/gorm"
 )
 
 func RunMigration(db *gorm.DB) {
-	err := db.AutoMigrate(&organizer.Organizer{}, &users.User{}, &auth.RefreshToken{}, &role.Role{})
+	AutoMigratableModels := []interface{}{
+		&organizer.Organizer{},
+		&users.User{},
+		&auth.RefreshToken{},
+		&role.Role{},
+		&tickettier.TicketTier{},
+	}
+
+	err := db.AutoMigrate(AutoMigratableModels...)
 	if err != nil {
 		log.Fatal("Migration failed:", err)
 	}

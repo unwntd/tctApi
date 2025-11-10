@@ -10,6 +10,7 @@ import (
 type OrganizerUsecase interface {
 	Create(input *organizer.OrganizerRequest) (*organizer.Organizer, error)
 	FindAll() (*[]organizer.Organizer, error)
+	FindById(organizerID uint) (*organizer.Organizer, error)
 	Update(organizerID uint, input *organizer.OrganizerRequest) (*organizer.Organizer, error)
 	Delete(organizerID uint) error
 }
@@ -52,6 +53,15 @@ func (o *organizerUsecase) FindAll() (*[]organizer.Organizer, error) {
 		return nil, fmt.Errorf("failed to find all organizers: %w", err)
 	}
 	return organizers, nil
+}
+
+func (o *organizerUsecase) FindById(organizerId uint) (*organizer.Organizer, error) {
+	org, err := o.repo.FindById(organizerId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find organizer: %w", err)
+	}
+
+	return org, nil
 }
 
 // Update an organizer by ID. Returns an error if the organizer does not exist or if deletion fails.
